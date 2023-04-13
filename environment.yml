@@ -1,0 +1,40 @@
+name: rgbd_cross_DA
+channels:
+  - pytorch
+  - conda-forge
+  - nvidia/label/cuda-11.3.0
+  - defaults
+dependencies:
+  # python version
+  - python=3.10
+
+  # cuda, toolkit for pytorch
+  # other to compile with nvcc
+  - cudatoolkit=11.3
+  - cuda-nvcc
+  - cuda-thrust
+  - cuda-runtime
+
+  # core
+  - pytorch=1.11
+  - pytorch-lightning
+  - torchvision
+  - matplotlib
+  - pip
+
+  # dev
+  - black
+
+  - pip:
+    # core
+    - mlflow==1.29
+    - wandb
+    - pipe
+    - plyfile
+    - nuscenes-devkit
+    - pyquaternion
+    - hydra-core
+    - git+https://github.com/facebookresearch/SparseConvNet.git@dcf6a7ff540e1825ffe48ba6b2c1493ba18788b2
+
+    # dev
+    - pytest

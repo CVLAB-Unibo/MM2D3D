@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=0,1 python experiments_USA_SING/rgbd_rgbxyz_sigmoid_for_rgb/run.py
