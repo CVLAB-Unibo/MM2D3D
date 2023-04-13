@@ -1,0 +1,108 @@
+# model hyperparams
+
+models:
+  - name: 2d_net
+    args:
+      pretrained: true
+      num_classes: 6
+      frozen_batch_norm: false
+    optimizer:
+      name: adamw
+      lr: 0.001
+    artifacts:
+      script_model: false
+    lr_scheduler:
+      name: one_cycle
+      max_lr: 0.005
+      total_steps: 16903
+
+  - name: 3d_net
+    args:
+      num_classes: 6
+      backbone_3d_kwargs:
+        in_channels: 3
+        m: 16
+        block_reps: 1
+        residual_blocks: false
+        full_scale: 4096
+        num_planes: 7
+    optimizer:
+      name: adamw
+      lr: 0.001
+    artifacts:
+      script_model: false
+    lr_scheduler:
+      name: one_cycle
+      max_lr: 0.005
+      total_steps: 16903 
+
+
+losses:
+  - name: cross_entropy
+    weight: 1.0
+    target: segmentation
+    args:
+      weight: [1., 2.03402089, 1.20641905, 2.21588055, 2.59745666, 1.82057006]
+
+logging:
+  # to log on mlflow
+  mlflow:
+    run_name: rgbd_rgbxyz_sigmoid_for_rgb
+    experiment_name: vkitti_semantic_kitti
+    note: |
+        baseline
+    tags:
+      model_name: train
+  # to log on wandb (by default it inherits some parameters from mlflow)
+  wandb:
+    run_name: ${logging.mlflow.run_name}
+    project: ${logging.mlflow.experiment_name}
+    tags: [train]
+
+metrics:
+  ckpt_monitor_2d: val/target/iou
+  mode_monitor: max
+  ckpt_monitor_3d: val/target/iou_3d
+  ckpt_monitor_avg: val/target/iou_avg
+
+defaults:
+- _self_
+- datasets: virtual_kitti_semantic_kitti
+- run: train
+
+# hydra specific config
+
+hydra:
+  output_subdir: null
+  run:
+    dir: .
+
+train:
+  short_run: false
+  reduce_factor: 1
+  # which of the following params
+  # must be logged
+  to_log:
+    - class_names
+
+  # params regarding the training
+  # procedure itself
+  params:
+    class_names:
+    - vegetation_terrain
+    - building
+    - road
+    - object
+    - truck
+    - car
+    class_palette:
+    - [0, 175, 0]  # vegetation_terrain
+    - [255, 200, 0]  # building
+    - [255, 0, 255]  # road
+    - [50, 255, 255]  # other-objects
+    - [80, 30, 180]  # truck
+    - [100, 150, 245]  # car
+    - [0, 0, 0]  # ignore
+    val_log_images_step: 50
+    lambda_xm_src: 0.1
+    lambda_xm_trg: 0.01

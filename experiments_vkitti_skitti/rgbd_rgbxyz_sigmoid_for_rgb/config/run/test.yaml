@@ -1,0 +1,8 @@
+type: test
+
+params:
+  batch_size: 8
+
+runtime:
+  gpus: 1
+  precision: 32

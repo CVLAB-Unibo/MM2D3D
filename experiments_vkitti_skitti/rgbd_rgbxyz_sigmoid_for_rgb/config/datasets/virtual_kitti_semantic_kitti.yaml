@@ -1,0 +1,44 @@
+name: vkitti_semantic_kitti
+multiple_trainloader_mode: max_size_cycle
+
+DATASET_SOURCE:
+  TRAIN: 
+    - train
+  preprocess_dir: "data/virtual_kitti/virtual_kitti_preprocess/preprocess/"
+  virtual_kitti_dir: "data/virtual_kitti/"
+
+DATASET_TARGET:
+  TRAIN: 
+    - train
+  VAL: 
+    - val
+  TEST: 
+    - test
+  preprocess_dir: "data/semanticKitti/preprocessed/preprocess/"
+  semantic_kitti_dir: "data/semanticKitti/"  # only front cam images are needed
+
+seg_labels: car,truck,bike,person,road,parking,sidewalk,building,nature,other-objects,ignore
+
+specific:
+  merge_classes_style: 'VirtualKITTI'
+  merge_classes: true
+  scale: 20
+  full_scale: 4096
+  downsample: [10000]
+  camera_coords: True
+  use_rgb: False
+
+augmentations:
+  noisy_rot: 0.1
+  flip_x: 0.5
+  rot: 6.2831
+  transl: True
+  fliplr: 0.5
+  color_jitter: [0.4, 0.4, 0.4]
+  crop_size: [480, 302]
+  bottom_crop: True
+
+  # hints_perc: 1.0
+  # filter_depth: false
+  # cameras:
+  # - cam-front
